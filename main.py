@@ -513,17 +513,20 @@ class InstaDownloader:
             if item_type == 'media_share':  # Photo / video/ carousel post
                 post = msg["media_share"]
                 caption = post["caption"]["text"]
-                
+
                 if "carousel_media" in post:
                     self.log(f'Processing carousel media ({len(post["carousel_media"])}) from @{sender}...')
-                    for carousel_item in post["carousel_media"]:
-                        if "video_versions" in carousel_item:
-                            links.append(carousel_item["video_versions"][0]["url"])
-                        elif "image_versions2" in carousel_item:
-                            links.append(carousel_item["image_versions2"]["candidates"][0]["url"])
-                        else:
-                            self.log(f'Found invalid carousel item from @{sender}...')
-                            self.handle_unsupported('carousel_item', sender_id)
+                    carousel_item = next((item for item in post["carousel_media"] if item["id"] == post["carousel_share_child_media_id"]), None)
+                    media_type = carousel_item["media_type"]
+
+                    #for carousel_item in post["carousel_media"]:
+                    if "video_versions" in carousel_item:
+                        links.append(carousel_item["video_versions"][0]["url"])
+                    elif "image_versions2" in carousel_item:
+                        links.append(carousel_item["image_versions2"]["candidates"][0]["url"])
+                    else:
+                        self.log(f'Found invalid carousel item from @{sender}...')
+                        self.handle_unsupported('carousel_item', sender_id)
                 elif "video_versions" in post:
                     self.log(f'Processing video post from @{sender}...')
                     links.append(post["video_versions"][0]["url"])
