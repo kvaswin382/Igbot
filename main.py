@@ -698,6 +698,23 @@ class InstaDownloader:
         return True
 
 
+    def handle_profile(self, username):
+        r = self._session.get(config["urls"]["profile"].format(username=username), params={'__a': 1, '__d': "dis"})
+        if not r.ok:
+            self.log(r.text)
+            return None
+        
+        res = json.loads(r.text)
+        
+        if not "graphql" in res:
+            return None
+        
+        return {
+            "biography": res["graphql"]["user"]["biography"],
+            "full_name": res["graphql"]["user"]["full_name"],
+            "profile_pic_url": res["graphql"]["user"]["profile_pic_url_hd"],
+        }
+
 class InstaDownloaderException(Exception):
     pass
 
