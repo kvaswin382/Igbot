@@ -5,7 +5,6 @@
     "admin_command_prefix": "!",
     "login_user_agent": "Instagram 89.0.0.21.101 Android (19/4.4; 320dpi; 720x1280; Xiaomi; HM 1SW; armani; qcom; en_US)",
     "user_agent": "Instagram 232.0.0.16.114 Android (19/4.4; 320dpi; 720x1280; Xiaomi; HM 1SW; armani; qcom; en_US)",
-    "tg_token": "5331829368:AAHoCHBEocvCgp0HW8HEIA07zg1brvt5CCM",
     "urls": {
         "_mid": "https://www.instagram.com/web/__mid/",
         "login": "https://www.instagram.com/accounts/login/ajax/",

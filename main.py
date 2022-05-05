@@ -855,7 +855,7 @@ if __name__ == '__main__':
     username = creds["username"]
     password = creds["password"]
 
-    TG_BOT_TOKEN = config["tg_token"]
+    TG_BOT_TOKEN = creds["tg_token"]
     tg_bot = telegram.Bot(token=TG_BOT_TOKEN)
 
     worker = InstaDownloader()
