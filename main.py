@@ -16,6 +16,7 @@ from functools import partial
 from datetime import datetime, timedelta
 from typing import Any, Callable, Dict, List, Optional
 import telegram
+from Database import Users as DB
 
 @atexit.register
 def exit_handler():
@@ -99,14 +100,18 @@ class InstaDownloader:
 
     def save_session_to_file(self, name):
         assert self.username is not None
-        filename = "sessions\\{}.session".format(name)
+        filename = os.path.join('sessions', "{}.session".format(name))
+        if not os.path.exists('sessions'):
+            os.makedirs('sessions')
+        #filename = "sessions\\{}.session".format(name)
         with open(filename, 'wb') as sessionfile:
             os.chmod(filename, 0o600)
             pickle.dump(requests.utils.dict_from_cookiejar(self._session.cookies), sessionfile)
             self.log("Saved session to %s." % filename)
 
     def load_session_from_file(self, name):
-        filename = "sessions\\{}.session".format(name)
+        filename = os.path.join('sessions', "{}.session".format(name))
+        #filename = "sessions\\{}.session".format(name)
         with open(filename, 'rb') as sessionfile:
             session = requests.Session()
             session.cookies = requests.utils.cookiejar_from_dict(pickle.load(sessionfile))
@@ -132,7 +137,7 @@ class InstaDownloader:
         session.cookies.update({'sessionid': '', 'mid': '', 'ig_pr': '1',
                                 'ig_vw': '1920', 'ig_cb': '1', 'csrftoken': '',
                                 's_network': '', 'ds_user_id': ''})
-        session.headers.update(self._default_http_header())
+        session.headers.update(self._default_http_header(login=True))
         session.get(config["urls"]["_mid"])
         csrf_token = session.cookies.get_dict()['csrftoken']
         session.headers.update({'X-CSRFToken': csrf_token})
@@ -212,7 +217,7 @@ class InstaDownloader:
             else:
                 self.username = username
 
-    def _default_http_header(self, empty_session_only: bool = False):
+    def _default_http_header(self, empty_session_only: bool = False, login: bool = False):
         header = {'Accept-Encoding': 'gzip, deflate, br',
                   'Accept-Language': 'en-US,en;q=0.9',
                   'Connection': 'keep-alive',
@@ -220,7 +225,7 @@ class InstaDownloader:
                   'Host': 'www.instagram.com',
                   'Origin': 'https://www.instagram.com',
                   'Referer': 'https://www.instagram.com/',
-                  'User-Agent': self.user_agent,
+                  'User-Agent': self.user_agent if not login else config["login_user_agent"],
                   'X-Instagram-AJAX': '1',
                   'X-Requested-With': 'XMLHttpRequest'}
         if empty_session_only:
