@@ -407,41 +407,43 @@ class InstaDownloader:
         return self._session
 
     def send_message(self, recipient, message):
-        send_msg = self._session.post(config["urls"]["send_message"], data={
-            'text': message,
-            '_uuid': str(uuid.uuid4()),
-            '_csrftoken': self._session.cookies.get_dict()['csrftoken'],
-            'recipient_users': f'[[{recipient}]]',
-            '_uid': '40381479993',
-            'action': 'send_item',
-            'client_context': str(uuid.uuid4())
-        }, headers={
-            'Content-type': 'application/x-www-form-urlencoded; charset=UTF-8'})
-        if not send_msg.ok:
-            self.log(f'Failed to send text message!\n'
-                     f'Status code: {send_msg.status_code}\n'
-                     f'URL: {send_msg.url}\n'
-                     f'Headers: {send_msg.request.headers}\n'
-                     f'Response: {send_msg.text}')
+        send_tg_msg(chat_id=recipient, caption=message)
+        # send_msg = self._session.post(config["urls"]["send_message"], data={
+        #     'text': message,
+        #     '_uuid': str(uuid.uuid4()),
+        #     '_csrftoken': self._session.cookies.get_dict()['csrftoken'],
+        #     'recipient_users': f'[[{recipient}]]',
+        #     '_uid': '40381479993',
+        #     'action': 'send_item',
+        #     'client_context': str(uuid.uuid4())
+        # }, headers={
+        #     'Content-type': 'application/x-www-form-urlencoded; charset=UTF-8'})
+        # if not send_msg.ok:
+        #     self.log(f'Failed to send text message!\n'
+        #              f'Status code: {send_msg.status_code}\n'
+        #              f'URL: {send_msg.url}\n'
+        #              f'Headers: {send_msg.request.headers}\n'
+        #              f'Response: {send_msg.text}')
 
     def send_link(self, recipient, link):
-        send_link = self._session.post(config["urls"]["send_link"], data={
-            'link_text': link,
-            'link_urls': f'["{link}"]',
-            '_uuid': str(uuid.uuid4()),
-            '_csrftoken': self._session.cookies.get_dict()['csrftoken'],
-            'recipient_users': f'[[{recipient}]]',
-            '_uid': '40381479993',
-            'action': 'send_item',
-            'client_context': str(uuid.uuid4())
-        }, headers={
-            'Content-type': 'application/x-www-form-urlencoded; charset=UTF-8'})
-        if not send_link.ok:
-            self.log(f'Failed to send link message!\n'
-                     f'Status code: {send_link.status_code}\n'
-                     f'URL: {send_link.url}\n'
-                     f'Headers: {send_link.request.headers}\n'
-                     f'Response: {send_link.text}')
+        self.send_message(recipient, link)
+        # send_link = self._session.post(config["urls"]["send_link"], data={
+        #     'link_text': link,
+        #     'link_urls': f'["{link}"]',
+        #     '_uuid': str(uuid.uuid4()),
+        #     '_csrftoken': self._session.cookies.get_dict()['csrftoken'],
+        #     'recipient_users': f'[[{recipient}]]',
+        #     '_uid': '40381479993',
+        #     'action': 'send_item',
+        #     'client_context': str(uuid.uuid4())
+        # }, headers={
+        #     'Content-type': 'application/x-www-form-urlencoded; charset=UTF-8'})
+        # if not send_link.ok:
+        #     self.log(f'Failed to send link message!\n'
+        #              f'Status code: {send_link.status_code}\n'
+        #              f'URL: {send_link.url}\n'
+        #              f'Headers: {send_link.request.headers}\n'
+        #              f'Response: {send_link.text}')
 
     def main(self):
         self._session.headers.update({'Host': None,
@@ -504,6 +506,9 @@ class InstaDownloader:
         f.write(json.dumps(thread, indent=4))
         f.close()
 
+        user_in_db = DB.get_or_create(
+            ig=sender
+        )
 
         self._session.post(config["urls"]["seen"].format(thread_id=thread["thread_id"], item_id=msg["item_id"]))
         # if len(thread["items"]) == 1:
@@ -512,6 +517,8 @@ class InstaDownloader:
         links = []
         caption = ""
         media_type = None
+
+        sender_id = user_in_db.tg
 
 
         try:
