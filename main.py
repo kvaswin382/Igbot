@@ -590,11 +590,21 @@ class InstaDownloader:
                     self.log(f'Received invalid igtv share from @{sender}...')
                     self.handle_unsupported('igtv', sender_id)
 
-            elif item_type == 'profile':  # Profile share
-                profile = msg["profile"]
+            elif item_type == 'xma_profile':  # Profile share
+                profile = msg["xma_profile"][0]
+                media_type = 1
+
                 if "profile_pic_url" in profile:
                     self.log(f'Processing profile share from @{sender}...')
                     links.append(profile["profile_pic_url"])
+                elif "header_icon_url_info" in profile:
+                    self.log(f'Processing profile share from @{sender}...')
+                    profile_data = self.handle_profile(profile["header_title_text"])
+                    if profile_data:
+                        caption = profile_data["biography"]
+                        links.append(profile_data["profile_pic_url"])
+                    else:
+                        links.append(profile["header_icon_url_info"]["url"])
                 else:
                     self.log(f'Received invalid profile share from @{sender}...')
                     self.handle_unsupported('profile', sender_id)
