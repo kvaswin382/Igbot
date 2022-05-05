@@ -505,6 +505,10 @@ class InstaDownloader:
         #     self.greet_user(sender_id)
         item_type = msg["item_type"]
         links = []
+        caption = ""
+        media_type = None
+
+        
         try:
             if item_type == 'media_share':  # Photo / video/ carousel post
                 post = msg["media_share"]
