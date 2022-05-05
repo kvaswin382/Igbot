@@ -548,6 +548,9 @@ class InstaDownloader:
             elif item_type == 'story_share':  # Photo / video story
                 if "media" in msg["story_share"]:
                     story = msg["story_share"]["media"]
+                    caption = story["caption"]["text"]
+                    media_type = story["media_type"]
+                    
                     if "video_versions" in story:
                         self.log(f'Processing video story from @{sender}...')
                         links.append(story["video_versions"][0]["url"])
