@@ -550,7 +550,7 @@ class InstaDownloader:
                     story = msg["story_share"]["media"]
                     caption = story["caption"]["text"]
                     media_type = story["media_type"]
-                    
+
                     if "video_versions" in story:
                         self.log(f'Processing video story from @{sender}...')
                         links.append(story["video_versions"][0]["url"])
@@ -570,6 +570,8 @@ class InstaDownloader:
 
             elif item_type == 'clip':  # Reels post
                 reel = msg["clip"]["clip"]
+                caption = reel["caption"]["text"]
+                media_type = reel["media_type"]
                 if "video_versions" in reel:
                     self.log(f'Processing reel post from @{sender}...')
                     links.append(reel["video_versions"][0]["url"])
