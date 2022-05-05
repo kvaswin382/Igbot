@@ -306,3 +306,4 @@ cython_debug/
 log.txt
 response-log.json
 users.db
+creds.json
