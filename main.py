@@ -16,7 +16,7 @@ from functools import partial
 from datetime import datetime, timedelta
 from typing import Any, Callable, Dict, List, Optional
 import telegram
-from Database import Users as DB
+from Database import create_tables, Users as DB
 
 @atexit.register
 def exit_handler():
@@ -28,12 +28,14 @@ def exit_handler():
 
 def send_tg_msg(chat_id, media = None, caption = "", media_type = None):
     res = None
-    if media_type == 1:
-        res = tg_bot.sendPhoto(chat_id, photo=media, caption=caption)
-    elif media_type == 2:
-        res = tg_bot.sendVideo(chat_id, video=media, caption=caption)
-    else:
-        res = tg_bot.sendMessage(chat_id, caption)
+
+    if chat_id:
+        if media_type == 1:
+            res = tg_bot.sendPhoto(chat_id, photo=media, caption=caption)
+        elif media_type == 2:
+            res = tg_bot.sendVideo(chat_id, video=media, caption=caption)
+        else:
+            res = tg_bot.sendMessage(chat_id, caption)
 
     
     return res
@@ -407,7 +409,10 @@ class InstaDownloader:
         return self._session
 
     def send_message(self, recipient, message):
-        send_tg_msg(chat_id=recipient, caption=message)
+        sendmsg = send_tg_msg(chat_id=recipient, caption=message)
+        
+        if sendmsg is None:
+            self.log("Can not send telegram message, probably the chat id is empty")
         # send_msg = self._session.post(config["urls"]["send_message"], data={
         #     'text': message,
         #     '_uuid': str(uuid.uuid4()),
@@ -426,7 +431,7 @@ class InstaDownloader:
         #              f'Response: {send_msg.text}')
 
     def send_link(self, recipient, link):
-        self.send_message(recipient, link)
+        return self.send_message(recipient, link)
         # send_link = self._session.post(config["urls"]["send_link"], data={
         #     'link_text': link,
         #     'link_urls': f'["{link}"]',
@@ -506,7 +511,7 @@ class InstaDownloader:
         f.write(json.dumps(thread, indent=4))
         f.close()
 
-        user_in_db = DB.get_or_create(
+        user_in_db = DB.get_or_none(
             ig=sender
         )
 
@@ -518,7 +523,13 @@ class InstaDownloader:
         caption = ""
         media_type = None
 
-        sender_id = user_in_db.tg
+        try:
+            sender_id = user_in_db.tg
+        except:
+            sender_id = None
+
+
+        self.log(sender_id)
 
 
         try:
@@ -653,13 +664,12 @@ class InstaDownloader:
             self.handle_unsupported('error', sender_id)
 
         for link in links:
-            self.send_link(sender_id, link)
+            send_tg_msg(sender_id, link, caption, media_type)
         return True
 
     def greet_user(self, recipient):
         # Welcome user and tell them what is supported and what isn't
-        self.send_message(recipient, config["lang"]["greet"])
-        return
+        return self.send_message(recipient, config["lang"]["greet"])
 
     def handle_unsupported(self, reason, recipient):
         # Tell the user that the media type is not supported
@@ -699,8 +709,8 @@ class InstaDownloader:
             msg = config["lang"]["no_stickers_gifs"]
         else:
             msg = 'Something went wrong...'
-        self.send_message(recipient, msg)
-        return
+        return self.send_message(recipient, msg)
+        
 
     def handle_admin_command(self, command, admin, admin_id):
         if command == 'shutdown':
@@ -861,6 +871,8 @@ if __name__ == '__main__':
         creds = json.load(creds_json)
     username = creds["username"]
     password = creds["password"]
+
+    create_tables()
 
     TG_BOT_TOKEN = creds["tg_token"]
     tg_bot = telegram.Bot(token=TG_BOT_TOKEN)
