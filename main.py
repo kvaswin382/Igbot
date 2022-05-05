@@ -482,8 +482,8 @@ class InstaDownloader:
 
     def handle_message(self, msg, sender, sender_id, thread):
         self._session.post(config["urls"]["seen"].format(thread_id=thread["thread_id"], item_id=msg["item_id"]))
-        if len(thread["items"]) == 1:
-            self.greet_user(sender_id)
+        # if len(thread["items"]) == 1:
+        #     self.greet_user(sender_id)
         item_type = msg["item_type"]
         links = []
         try:
