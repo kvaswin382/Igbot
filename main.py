@@ -508,10 +508,12 @@ class InstaDownloader:
         caption = ""
         media_type = None
 
-        
+
         try:
             if item_type == 'media_share':  # Photo / video/ carousel post
                 post = msg["media_share"]
+                caption = post["caption"]["text"]
+                
                 if "carousel_media" in post:
                     self.log(f'Processing carousel media ({len(post["carousel_media"])}) from @{sender}...')
                     for carousel_item in post["carousel_media"]:
