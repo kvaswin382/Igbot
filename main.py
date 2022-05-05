@@ -581,6 +581,8 @@ class InstaDownloader:
 
             elif item_type == 'felix_share':  # IGTV post
                 igtv = msg["felix_share"]
+                caption = igtv["video"]["caption"]["text"]
+                media_type = igtv["video"]["media_type"]
                 if "video" in igtv:
                     self.log(f'Processing igtv video from @{sender}...')
                     links.append(igtv["video"]["video_versions"][0]["url"])
