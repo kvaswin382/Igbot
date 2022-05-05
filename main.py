@@ -15,13 +15,27 @@ import requests.utils
 from functools import partial
 from datetime import datetime, timedelta
 from typing import Any, Callable, Dict, List, Optional
-
+import telegram
 
 @atexit.register
 def exit_handler():
     if worker.is_logged_in():
         worker.log("Saving session for %s." % username)
         worker.save_session_to_file(username)
+
+
+
+def send_tg_msg(chat_id, media = None, caption = "", media_type = None):
+    res = None
+    if media_type == 1:
+        res = tg_bot.sendPhoto(chat_id, photo=media, caption=caption)
+    elif media_type == 2:
+        res = tg_bot.sendVideo(chat_id, video=media, caption=caption)
+    else:
+        res = tg_bot.sendMessage(chat_id, caption)
+
+    
+    return res
 
 
 def default_user_agent() -> str:
@@ -472,7 +486,7 @@ class InstaDownloader:
     def handle_unreads(self, threads):
         for thread in threads:
             last_msg = thread["items"][0]
-            sender = thread["thread_title"]
+            sender = thread["users"][0]["username"]
             sender_id = last_msg["user_id"]
             if sender_id != self.user_id:
                 if not self.handle_message(last_msg, sender, sender_id, thread):
@@ -481,6 +495,11 @@ class InstaDownloader:
         return True
 
     def handle_message(self, msg, sender, sender_id, thread):
+        f = open("my_log.json", "w")
+        f.write(json.dumps(thread, indent=4))
+        f.close()
+
+
         self._session.post(config["urls"]["seen"].format(thread_id=thread["thread_id"], item_id=msg["item_id"]))
         # if len(thread["items"]) == 1:
         #     self.greet_user(sender_id)
@@ -787,6 +806,10 @@ if __name__ == '__main__':
         creds = json.load(creds_json)
     username = creds["username"]
     password = creds["password"]
+
+    TG_BOT_TOKEN = config["tg_token"]
+    tg_bot = telegram.Bot(token=TG_BOT_TOKEN)
+
     worker = InstaDownloader()
     worker.setup_session(username)
     worker.log(f"Logged in as @{username}.")
