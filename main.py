@@ -430,26 +430,6 @@ class InstaDownloader:
         #              f'Headers: {send_msg.request.headers}\n'
         #              f'Response: {send_msg.text}')
 
-    def send_link(self, recipient, link):
-        return self.send_message(recipient, link)
-        # send_link = self._session.post(config["urls"]["send_link"], data={
-        #     'link_text': link,
-        #     'link_urls': f'["{link}"]',
-        #     '_uuid': str(uuid.uuid4()),
-        #     '_csrftoken': self._session.cookies.get_dict()['csrftoken'],
-        #     'recipient_users': f'[[{recipient}]]',
-        #     '_uid': '40381479993',
-        #     'action': 'send_item',
-        #     'client_context': str(uuid.uuid4())
-        # }, headers={
-        #     'Content-type': 'application/x-www-form-urlencoded; charset=UTF-8'})
-        # if not send_link.ok:
-        #     self.log(f'Failed to send link message!\n'
-        #              f'Status code: {send_link.status_code}\n'
-        #              f'URL: {send_link.url}\n'
-        #              f'Headers: {send_link.request.headers}\n'
-        #              f'Response: {send_link.text}')
-
     def main(self):
         self._session.headers.update({'Host': None,
                                       'sec-fetch-dest': 'empty',
