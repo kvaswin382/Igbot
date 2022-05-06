@@ -413,22 +413,6 @@ class InstaDownloader:
         
         if sendmsg is None:
             self.log("Can not send telegram message, probably the chat id is empty")
-        # send_msg = self._session.post(config["urls"]["send_message"], data={
-        #     'text': message,
-        #     '_uuid': str(uuid.uuid4()),
-        #     '_csrftoken': self._session.cookies.get_dict()['csrftoken'],
-        #     'recipient_users': f'[[{recipient}]]',
-        #     '_uid': '40381479993',
-        #     'action': 'send_item',
-        #     'client_context': str(uuid.uuid4())
-        # }, headers={
-        #     'Content-type': 'application/x-www-form-urlencoded; charset=UTF-8'})
-        # if not send_msg.ok:
-        #     self.log(f'Failed to send text message!\n'
-        #              f'Status code: {send_msg.status_code}\n'
-        #              f'URL: {send_msg.url}\n'
-        #              f'Headers: {send_msg.request.headers}\n'
-        #              f'Response: {send_msg.text}')
 
     def main(self):
         self._session.headers.update({'Host': None,
@@ -509,12 +493,10 @@ class InstaDownloader:
             sender_id = None
 
 
-        self.log(sender_id)
-
-
         try:
             if item_type == 'media_share':  # Photo / video/ carousel post
                 post = msg["media_share"]
+                media_type = post["media_type"]
                 caption = post["caption"]["text"]
 
                 if "carousel_media" in post:
