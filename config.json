@@ -14,7 +14,8 @@
         "accept_pending": "https://i.instagram.com/api/v1/direct_v2/threads/approve_multiple/",
         "seen": "https://i.instagram.com/api/v1/direct_v2/threads/{thread_id}/items/{item_id}/seen/",
         "send_message": "https://i.instagram.com/api/v1/direct_v2/threads/broadcast/text/",
-        "send_link": "https://i.instagram.com/api/v1/direct_v2/threads/broadcast/link/"
+        "send_link": "https://i.instagram.com/api/v1/direct_v2/threads/broadcast/link/",
+        "profile": "https://www.instagram.com/{username}/"
     },
     "lang": {
         "greet": "Welcome to InstaDownloader! We currently support: Posts (photo, video and slides), Stories (photo and video), Reels, IGTVs and Profiles (user icon). Please refrain from sending anything other than those media types.",
