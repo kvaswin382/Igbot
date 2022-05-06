@@ -304,7 +304,7 @@ cython_debug/
 # Project specific ignore
 *.session
 log.txt
-my-log.json
+my_log.json
 response-log.json
 users.db
 creds.json
