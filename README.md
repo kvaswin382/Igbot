@@ -2,7 +2,10 @@
 An Instagram bot that replies to DMs with direct links to the downloadable media
 
 Code behind [`_insta.downloader_`](https://www.instagram.com/_insta.downloader_/)
+# img_2_pdf
 
+## Deploy to Heroku
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/kvaswin382/Igbot)
 ### Supported media types
 - Posts (photo, video and slides)
 - Stories (photo and video)
