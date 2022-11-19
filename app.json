@@ -1,0 +1,11 @@
+{
+    "name": "IG BOT",
+    "description": "This Bot Can Downlaod From IG",
+    "repository": "https://github.com/kvaswin382/Igbot",
+    "keywords": ["Insta ", "Python", "telegram bot"],
+    "buildpacks": [
+        {
+            "url": "heroku/python"
+        }
+    ]
+}
