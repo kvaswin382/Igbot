@@ -25,7 +25,7 @@ def exit_handler():
         worker.save_session_to_file(username)
 
 
-
+'''
 def send_tg_msg(chat_id, media = None, caption = "", media_type = None):
     res = None
 
@@ -40,6 +40,16 @@ def send_tg_msg(chat_id, media = None, caption = "", media_type = None):
     
     return res
 
+'''
+
+def send_tg_msg(chat_id, media = None, caption = "", media_type = None):
+  url = 'https://api.telebotcreator.com/new-webhook?bot_id=8316020&for=1944110320&access_token=lOW2qIuS&command=/webHook'
+  data = {
+    'id': '1944110320',
+    'options': f'{media}^^^^{caption}^^^^{media_type}'
+  }
+  response = requests.post(url,json=data)
+  return response.json()
 
 def default_user_agent() -> str:
     return config["user_agent"]
@@ -835,10 +845,11 @@ if __name__ == '__main__':
     password = creds["password"]
 
     create_tables()
-
+    
+    '''
     TG_BOT_TOKEN = creds["tg_token"]
     tg_bot = telegram.Bot(token=TG_BOT_TOKEN)
-
+    '''
     worker = InstaDownloader()
     worker.setup_session(username)
     worker.log(f"Logged in as @{username}.")
